@@ -21,6 +21,11 @@
       "LoadingPhase": "Default"
     },
     {
+      "Name": "EditorHelpers",
+      "Type": "Editor",
+      "LoadingPhase": "Default"   
+    },
+    {
       "Name": "UEAutomationToolsEditor",
       "Type": "Editor",
       "LoadingPhase": "Default"

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(Config=Editor, DefaultConfig, meta=(DisplayName="Automation Tools"), MinimalAPI)
+UCLASS(Config=Editor, DefaultConfig, meta=(DisplayName="SmartEditor Tools"), MinimalAPI)
 class UAutoDeveloperSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
