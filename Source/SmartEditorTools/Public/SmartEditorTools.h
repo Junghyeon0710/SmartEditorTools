@@ -4,7 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 
-class FUEAutomationToolsModule : public IModuleInterface
+class FSmartEditorToolsModule : public IModuleInterface
 {
 public:
 

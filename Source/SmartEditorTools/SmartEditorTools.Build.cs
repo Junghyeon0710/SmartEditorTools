@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class UEAutomationTools : ModuleRules
+public class SmartEditorTools : ModuleRules
 {
-	public UEAutomationTools(ReadOnlyTargetRules Target) : base(Target)
+	public SmartEditorTools(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
