@@ -40,6 +40,7 @@ public class UEAutomationToolsEditor : ModuleRules
 				"SlateCore",
 				"unrealEd",
 				"DeveloperSettings",
+				"ToolMenus"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
