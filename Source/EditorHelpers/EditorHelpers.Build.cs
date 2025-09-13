@@ -38,6 +38,9 @@ public class EditorHelpers : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"SmartEditorTools",
+				"UnrealEd",
+				"ToolMenus",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
