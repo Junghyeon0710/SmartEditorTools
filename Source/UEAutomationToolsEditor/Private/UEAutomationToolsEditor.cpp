@@ -2,6 +2,7 @@
 
 #include "UEAutomationToolsEditor.h"
 
+#include "IPythonScriptPlugin.h"
 #include "UnrealEdGlobals.h"
 #include "Editor/UnrealEdEngine.h"
 
@@ -24,7 +25,17 @@ static bool HasPlayWorldAndRunning()
 
 static void PreFixAsset_Clicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PreFixAsset_Clicked"));
+	if (IPythonScriptPlugin::Get())
+	{
+		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/UEAutomationTools/Scripts/PreFixAllAsset.py"));
+		
+		FString PythonCommand = FString::Printf(TEXT("exec(open(r'%s').read())"), *ScriptPath);
+		IPythonScriptPlugin::Get()->ExecPythonCommand(*PythonCommand);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PythonScriptPlugin is not enabled!"));
+	}
 }
 
 static void RegisterGameEditorMenus()
