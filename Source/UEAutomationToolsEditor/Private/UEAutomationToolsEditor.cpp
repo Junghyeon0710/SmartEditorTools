@@ -27,7 +27,7 @@ static void PreFixAsset_Clicked()
 {
 	if (IPythonScriptPlugin::Get())
 	{
-		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/UEAutomationTools/Scripts/PreFixAllAsset.py"));
+		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/SmartEditorTools/Scripts/PreFixAllAsset.py"));
 		
 		FString PythonCommand = FString::Printf(TEXT("exec(open(r'%s').read())"), *ScriptPath);
 		IPythonScriptPlugin::Get()->ExecPythonCommand(*PythonCommand);

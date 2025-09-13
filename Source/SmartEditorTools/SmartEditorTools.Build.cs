@@ -38,6 +38,8 @@ public class SmartEditorTools : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"DeveloperSettings",
+				"UnrealEd",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

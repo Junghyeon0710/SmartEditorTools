@@ -20,10 +20,11 @@ prefixes = {
     "SoundWave": "SW",
     "StaticMesh": "SM",
     "Texture2D": "T",
-    "TextureCube": "TC"
+    "TextureCube": "TC",
+    "NiagaraSystem": "NS"
 }
 
-settings = unreal.get_default_object(unreal.AutoDeveloperSettings)
+settings = unreal.get_default_object(unreal.SmartDeveloperSettings)
 working_paths = [p.path for p in settings.pre_fix_asset_paths if p.path]
 
 if not working_paths:
