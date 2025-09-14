@@ -1,28 +1,18 @@
+import sys
+import os
 import unreal
 
-prefixes = {
-    "AnimBlueprint": "ABP",
-    "AnimSequence": "A",
-    "Animation": "A",
-    "BlendSpace1D": "BS",
-    "Blueprint": "BP",
-    "WidgetBlueprint": "WBP",
-    "CurveFloat": "CF",
-    "CurveLinearColor": "CLC",
-    "Material": "M",
-    "MaterialFunction": "MF",
-    "MaterialInstance": "MI",
-    "ParticleSystem": "PS",
-    "PhysicsAsset": "PHYS",
-    "SkeletalMesh": "SK",
-    "Skeleton": "SKL",
-    "SoundCue": "SC",
-    "SoundWave": "SW",
-    "StaticMesh": "SM",
-    "Texture2D": "T",
-    "TextureCube": "TC",
-    "NiagaraSystem": "NS"
-}
+PLUGIN_NAME = "SmartEditorTools"
+
+plugin_base_dir = os.path.join(unreal.Paths.project_plugins_dir(), PLUGIN_NAME)
+
+plugin_script_dir = os.path.join(plugin_base_dir, "Scripts")
+
+if plugin_script_dir not in sys.path:
+    sys.path.append(plugin_script_dir)
+
+from PrefixRules import PREFIX_RULES, get_prefix, needs_prefix
+ 
 
 settings = unreal.get_default_object(unreal.SmartDeveloperSettings)
 working_paths = [p.path for p in settings.pre_fix_asset_paths if p.path]
@@ -35,11 +25,6 @@ if not working_paths:
     )
     raise RuntimeError("Cannot get paths from AutoDeveloperSettings")
 
-def get_prefix(class_name):
-    return prefixes.get(class_name, "")
-
-def format_new_name(prefix, asset_name):
-    return f"{prefix}_{asset_name}.{prefix}_{asset_name}"
 
 all_assets = []
 for path in working_paths:

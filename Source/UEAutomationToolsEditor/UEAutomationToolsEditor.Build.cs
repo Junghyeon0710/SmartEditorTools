@@ -41,7 +41,8 @@ public class UEAutomationToolsEditor : ModuleRules
 				"unrealEd",
 				"DeveloperSettings",
 				"ToolMenus",
-				"PythonScriptPlugin"
+				"PythonScriptPlugin",
+				"SmartEditorTools",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

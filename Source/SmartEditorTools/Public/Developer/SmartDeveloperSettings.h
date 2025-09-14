@@ -21,6 +21,9 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category=Assets, meta=(ContentDir))
 	TArray<FDirectoryPath> PreFixAssetPaths;
+
+	UPROPERTY(BlueprintReadOnly)
+	FSoftObjectPath AutoAssetPath;
 #endif
 	
 protected:

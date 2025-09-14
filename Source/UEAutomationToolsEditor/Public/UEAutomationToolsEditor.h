@@ -4,6 +4,8 @@
 
 #include "Modules/ModuleManager.h"
 
+struct  FAssetRenameData;
+
 class FUEAutomationToolsEditorModule : public IModuleInterface
 {
 public:
@@ -12,6 +14,9 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
+	void OnAssetRenamed(const FAssetData& AssetData, const FString& OldName);
+	void OnAssetPostRenamed(const TArray<FAssetRenameData>& Data);
 private:
 	FDelegateHandle ToolMenusHandle;
+	FDelegateHandle RenameDelegateHandle;
 };

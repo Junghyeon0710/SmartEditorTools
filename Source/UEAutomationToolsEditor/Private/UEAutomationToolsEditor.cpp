@@ -2,8 +2,11 @@
 
 #include "UEAutomationToolsEditor.h"
 
+#include "AssetToolsModule.h"
 #include "IPythonScriptPlugin.h"
 #include "UnrealEdGlobals.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Developer/SmartDeveloperSettings.h"
 #include "Editor/UnrealEdEngine.h"
 
 #define LOCTEXT_NAMESPACE "FUEAutomationToolsModule"
@@ -58,6 +61,46 @@ static void RegisterGameEditorMenus()
 	Section.AddEntry(Automation);
 }
 
+void FUEAutomationToolsEditorModule::OnAssetPostRenamed(const TArray<FAssetRenameData>& Datas)
+{
+	if (IPythonScriptPlugin::Get())
+	{
+		if (USmartDeveloperSettings* SmartDeveloperSettings = GetMutableDefault<USmartDeveloperSettings>())
+		{
+			SmartDeveloperSettings->AutoAssetPath = Datas.Last().NewObjectPath;
+		}
+		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/SmartEditorTools/Scripts/AutoPreFix.py"));
+		
+		FString PythonCommand = FString::Printf(TEXT("exec(open(r'%s').read())"), *ScriptPath);
+		IPythonScriptPlugin::Get()->ExecPythonCommand(*PythonCommand);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PythonScriptPlugin is not enabled!"));
+	}
+
+
+}
+
+void FUEAutomationToolsEditorModule::OnAssetRenamed(const FAssetData& AssetData, const FString& OldName)
+{
+	if (IPythonScriptPlugin::Get())
+	{
+		if (USmartDeveloperSettings* SmartDeveloperSettings = GetMutableDefault<USmartDeveloperSettings>())
+		{
+			SmartDeveloperSettings->AutoAssetPath = AssetData.GetSoftObjectPath();
+		}
+		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/SmartEditorTools/Scripts/AutoPreFix.py"));
+		
+		FString PythonCommand = FString::Printf(TEXT("exec(open(r'%s').read())"), *ScriptPath);
+		IPythonScriptPlugin::Get()->ExecPythonCommand(*PythonCommand);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PythonScriptPlugin is not enabled!"));
+	}
+}
+
 void FUEAutomationToolsEditorModule::StartupModule()
 {
 	if (!IsRunningGame())
@@ -66,6 +109,11 @@ void FUEAutomationToolsEditorModule::StartupModule()
 		{
 			ToolMenusHandle = UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateStatic(&RegisterGameEditorMenus));
 		}
+		// FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+		// RenameDelegateHandle = AssetToolsModule.Get().OnAssetPostRename().AddRaw(this,  &FUEAutomationToolsEditorModule::OnAssetPostRenamed);
+
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+		RenameDelegateHandle = AssetRegistryModule.Get().OnAssetRenamed().AddRaw(this, &FUEAutomationToolsEditorModule::OnAssetRenamed);
 	}
 }
 
@@ -74,6 +122,16 @@ void FUEAutomationToolsEditorModule::ShutdownModule()
 	if (UObjectInitialized() && ToolMenusHandle.IsValid())
 	{
 		UToolMenus::UnRegisterStartupCallback(ToolMenusHandle);
+	}
+	// if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
+	// {
+	// 	FAssetToolsModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+	// 	AssetRegistryModule.Get().OnAssetPostRename().Remove(RenameDelegateHandle);
+	// }
+	if (FModuleManager::Get().IsModuleLoaded("AssetRegistry"))
+	{
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+		AssetRegistryModule.Get().OnAssetRenamed().Remove(RenameDelegateHandle);
 	}
 }
 
