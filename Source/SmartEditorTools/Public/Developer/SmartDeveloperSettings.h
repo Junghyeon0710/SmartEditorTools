@@ -23,7 +23,7 @@ public:
 	TArray<FDirectoryPath> PreFixAssetPaths;
 
 	UPROPERTY(BlueprintReadOnly)
-	FSoftObjectPath AutoAssetPath;
+	FString AutoAssetPath;
 #endif
 	
 protected:

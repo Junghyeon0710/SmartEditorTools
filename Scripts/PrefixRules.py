@@ -22,7 +22,8 @@ PREFIX_RULES = {
     "StaticMesh": "SM",
     "Texture2D": "T",
     "TextureCube": "TC",
-    "NiagaraSystem": "NS"
+    "NiagaraSystem": "NS",
+    "World": "L"
 }
 
 def get_prefix(class_name: str) -> str:

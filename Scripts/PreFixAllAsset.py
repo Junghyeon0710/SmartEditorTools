@@ -43,7 +43,7 @@ for asset_path in all_assets:
         continue
 
     path_only = asset_path.rsplit("/", 1)[0] + "/"
-    new_name = format_new_name(prefix, asset_name)
+    new_name = f"{prefix}_{asset_name}"
     new_path = path_only + new_name
     preview_list.append((asset_path, new_path))
 

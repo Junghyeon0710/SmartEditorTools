@@ -67,7 +67,7 @@ void FUEAutomationToolsEditorModule::OnAssetPostRenamed(const TArray<FAssetRenam
 	{
 		if (USmartDeveloperSettings* SmartDeveloperSettings = GetMutableDefault<USmartDeveloperSettings>())
 		{
-			SmartDeveloperSettings->AutoAssetPath = Datas.Last().NewObjectPath;
+			SmartDeveloperSettings->AutoAssetPath = Datas.Last().Asset.Get()->GetPathName();
 		}
 		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/SmartEditorTools/Scripts/AutoPreFix.py"));
 		
@@ -88,7 +88,7 @@ void FUEAutomationToolsEditorModule::OnAssetRenamed(const FAssetData& AssetData,
 	{
 		if (USmartDeveloperSettings* SmartDeveloperSettings = GetMutableDefault<USmartDeveloperSettings>())
 		{
-			SmartDeveloperSettings->AutoAssetPath = AssetData.GetSoftObjectPath();
+			SmartDeveloperSettings->AutoAssetPath = AssetData.GetSoftObjectPath().ToString();
 		}
 		FString ScriptPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Plugins/SmartEditorTools/Scripts/AutoPreFix.py"));
 		
@@ -109,11 +109,11 @@ void FUEAutomationToolsEditorModule::StartupModule()
 		{
 			ToolMenusHandle = UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateStatic(&RegisterGameEditorMenus));
 		}
-		// FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
-		// RenameDelegateHandle = AssetToolsModule.Get().OnAssetPostRename().AddRaw(this,  &FUEAutomationToolsEditorModule::OnAssetPostRenamed);
+		FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+		RenameDelegateHandle = AssetToolsModule.Get().OnAssetPostRename().AddRaw(this,  &FUEAutomationToolsEditorModule::OnAssetPostRenamed);
 
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-		RenameDelegateHandle = AssetRegistryModule.Get().OnAssetRenamed().AddRaw(this, &FUEAutomationToolsEditorModule::OnAssetRenamed);
+		// FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+		// RenameDelegateHandle = AssetRegistryModule.Get().OnAssetRenamed().AddRaw(this, &FUEAutomationToolsEditorModule::OnAssetRenamed);
 	}
 }
 
@@ -123,16 +123,16 @@ void FUEAutomationToolsEditorModule::ShutdownModule()
 	{
 		UToolMenus::UnRegisterStartupCallback(ToolMenusHandle);
 	}
-	// if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
-	// {
-	// 	FAssetToolsModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
-	// 	AssetRegistryModule.Get().OnAssetPostRename().Remove(RenameDelegateHandle);
-	// }
-	if (FModuleManager::Get().IsModuleLoaded("AssetRegistry"))
+	if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
 	{
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-		AssetRegistryModule.Get().OnAssetRenamed().Remove(RenameDelegateHandle);
+		FAssetToolsModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+		AssetRegistryModule.Get().OnAssetPostRename().Remove(RenameDelegateHandle);
 	}
+	// if (FModuleManager::Get().IsModuleLoaded("AssetRegistry"))
+	// {
+	// 	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	// 	AssetRegistryModule.Get().OnAssetRenamed().Remove(RenameDelegateHandle);
+	// }
 }
 
 #undef LOCTEXT_NAMESPACE
