@@ -22,8 +22,11 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category=Assets, meta=(ContentDir))
 	TArray<FDirectoryPath> PreFixAssetPaths;
 
-	UPROPERTY(BlueprintReadOnly)
-	FString AutoAssetPath;
+	UPROPERTY(BlueprintReadWrite)
+	FString AutoAssetPath = {};
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category=Assets)
+	bool bAutoPrefix = false;
 #endif
 	
 protected:

@@ -46,7 +46,7 @@ for asset_path in all_assets:
     new_name = f"{prefix}_{asset_name}"
     new_path = path_only + new_name
     preview_list.append((asset_path, new_path))
-
+    print(asset_path + "Junghyeon") 
 if not preview_list:
     unreal.EditorDialog.show_message(
         title="Result",
@@ -73,6 +73,7 @@ else:
             changed_count = 0
             for old_path, new_path in preview_list:
                 if unreal.EditorAssetLibrary.rename_asset(old_path, new_path):
+                    unreal.log(f"[PrefixFix] Renamed {old_path} → {new_path}")
                     changed_count += 1
                 slow_task.enter_progress_frame(1)
                 if slow_task.should_cancel():
