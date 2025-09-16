@@ -47,7 +47,10 @@ Inside **PREFIXRULES**, you can assign custom prefixes in the format:
 ## How do I use the naming convention rules?
 
 ### 1. Manually apply prefixes to all assets in a specified path
-Go to **Editor Menu → Project Settings → Plugins → SmartEditorTools**.  
+
+  
+   Go to:  `Editor Menu → Project Settings → Plugins → SmartEditorTools`
+   
 <img width="1168" height="119" alt="image" src="https://github.com/user-attachments/assets/047a6564-89e0-4fec-a07e-181f86326d9c" />  
 
 Add the paths you want to check under **PreFixAssetPath**.  
@@ -60,7 +63,7 @@ Then, click **PreFixAsset** from the **Level Editor Menu** to run the prefix che
 ### 2. Automatically apply prefixes when assets are created or renamed
 When assets are renamed or newly added, SmartEditorTools can automatically check and update names to match your naming convention.  
 
-Go to **Editor Menu → Project Settings → Plugins → SmartEditorTools**.  
+  Go to:  `Editor Menu → Project Settings → Plugins → SmartEditorTools`
 <img width="1104" height="209" alt="image" src="https://github.com/user-attachments/assets/1b03f607-9241-4266-88b4-1ec9e5a2956f" />  
 
 Enable **bAutoPrefix** to activate this feature.
