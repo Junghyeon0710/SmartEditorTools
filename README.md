@@ -72,7 +72,7 @@ Enable **bAutoPrefix** to activate this feature.
 <br>
 
 ## What if I run into an issue?
-If you encounter any problems, please open a new [issue](./issues).  
+If you encounter any problems, please open a new [issue](https://github.com/Junghyeon0710/UEAutomationTools/issues).  
 We’ll review it and provide a fix.
 
 
