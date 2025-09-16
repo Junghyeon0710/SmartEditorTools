@@ -3,8 +3,7 @@
 A plugin for Unreal Engine that provides a smarter editor environment using **Python** and **Slate widgets**.  
 
 - Supported Version: **Unreal Engine 5.6**  
-- [Update Notes](https://github.com/Junghyeon0710/DynamicWeather/wiki/%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8-%EB%85%B8%ED%8A%B8)
-
+- [Update Notes](https://github.com/Junghyeon0710/UEAutomationTools/wiki/Update-Notes)
 ---
 
 ## Installation
