@@ -10,11 +10,8 @@ if plugin_dir not in sys.path:
 from PrefixRules import get_prefix
 
 print("Autopreifx Start In Python")
-# SmartDeveloperSettings에서 단일 경로 가져오기
 settings = unreal.get_default_object(unreal.SmartDeveloperSettings)
-asset_path = settings.auto_asset_path  # FName → str
-
-# 에셋 데이터 가져오기
+asset_path = settings.auto_asset_path 
 asset_data = unreal.EditorAssetLibrary.find_asset_data(asset_path)
 if not asset_data:
     unreal.log_warning(f"[PrefixFix] Asset not found: {asset_path}")
@@ -30,9 +27,8 @@ else:
         settings.auto_asset_path = ""
         pass
     else:
-        # 이름 변경
         path_only = asset_path.rsplit("/", 1)[0] + "/"
-        new_name = f"{prefix}_{asset_name}"  # format_new_name(prefix, asset_name) 대신
+        new_name = f"{prefix}_{asset_name}" 
         new_path = path_only + new_name
         settings.auto_asset_path = "ing"
         success = unreal.EditorAssetLibrary.rename_asset(asset_path, new_path)

@@ -23,7 +23,8 @@ PREFIX_RULES = {
     "Texture2D": "T",
     "TextureCube": "TC",
     "NiagaraSystem": "NS",
-    "World": "L"
+    "World": "L",
+    "LevelSequence": "SEQ"
 }
 
 def get_prefix(class_name: str) -> str:
