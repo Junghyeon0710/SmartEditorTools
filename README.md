@@ -24,7 +24,7 @@ A plugin for Unreal Engine that provides a smarter editor environment using **Py
 
 ---
 
-## Example Usage
+## How to Use
 
 ### Enable the Plugin
 <img width="1825" height="143" alt="image" src="https://github.com/user-attachments/assets/d284c166-8961-470e-a0e8-a6052ae0fc32" />  
@@ -45,22 +45,35 @@ Inside **PREFIXRULES**, you can assign custom prefixes in the format:
 
 ---
 
-## 네이밍 컨변센 룰을 정했는데 어떻게 사용하나요
+## How do I use the naming convention rules?
 
-1. 지정 경로 모든 에셋 검사후 접두사 추가해주는 방법
-   에디터 메뉴 -> Project Settings에서 Plugins카테고리에서 SmartEditor Tools를 찾아줍니다.
-   <img width="1168" height="119" alt="image" src="https://github.com/user-attachments/assets/047a6564-89e0-4fec-a07e-181f86326d9c" />
+### 1. Manually apply prefixes to all assets in a specified path
+Go to **Editor Menu → Project Settings → Plugins → SmartEditorTools**.  
+<img width="1168" height="119" alt="image" src="https://github.com/user-attachments/assets/047a6564-89e0-4fec-a07e-181f86326d9c" />  
 
-PreFixAssetPath에 검사할 경로를 추가 해줍니다.
-<img width="890" height="70" alt="image" src="https://github.com/user-attachments/assets/0c3bf924-d9a7-41a3-a917-2ecc2fbe6430" />
-레벨 에디터 메뉴에 있는 PreFixAsset을 클릭해줍니다.
+Add the paths you want to check under **PreFixAssetPath**.  
+<img width="890" height="70" alt="image" src="https://github.com/user-attachments/assets/0c3bf924-d9a7-41a3-a917-2ecc2fbe6430" />  
 
+Then, click **PreFixAsset** from the **Level Editor Menu** to run the prefix check and automatically update asset names.
 
-2. 자동으로 접두사 추가해주는 방법
-   이름이 바뀌거나 에셋이 추가될 때 자동으로 검사후 알맞은 네이밍 컨벤션으로 바꿔줍니다.
-    에디터 메뉴 -> Project Settings에서 Plugins카테고리에서 SmartEditor Tools를 찾아줍니다.
-<img width="1104" height="209" alt="image" src="https://github.com/user-attachments/assets/1b03f607-9241-4266-88b4-1ec9e5a2956f" />
-bAutoPrefix를 체크 해주면 적용이 된겁니다.
+---
+
+### 2. Automatically apply prefixes when assets are created or renamed
+When assets are renamed or newly added, SmartEditorTools can automatically check and update names to match your naming convention.  
+
+Go to **Editor Menu → Project Settings → Plugins → SmartEditorTools**.  
+<img width="1104" height="209" alt="image" src="https://github.com/user-attachments/assets/1b03f607-9241-4266-88b4-1ec9e5a2956f" />  
+
+Enable **bAutoPrefix** to activate this feature.
+
+> The examples above are just a few use cases.  
+> For more features, please check the [docs](./docs).
+
+<br>
+
+## What if I run into an issue?
+If you encounter any problems, please open a new [issue](./issues).  
+We’ll review it and provide a fix.
 
 
 
