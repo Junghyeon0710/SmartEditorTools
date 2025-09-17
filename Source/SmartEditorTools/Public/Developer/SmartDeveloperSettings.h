@@ -27,6 +27,7 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category=Assets)
 	bool bAutoPrefix = false;
+
 #endif
 	
 protected:

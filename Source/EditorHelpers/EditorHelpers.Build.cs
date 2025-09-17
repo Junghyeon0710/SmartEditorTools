@@ -41,6 +41,9 @@ public class EditorHelpers : ModuleRules
 				"SmartEditorTools",
 				"UnrealEd",
 				"ToolMenus",
+				"ContentBrowser",
+				"PluginBrowser",
+				"EditorScriptingUtilities",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

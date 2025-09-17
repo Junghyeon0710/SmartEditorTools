@@ -2,6 +2,9 @@
 
 #include "EditorHelpers.h"
 
+#include "ContentBrowserModule.h"
+#include "EditorAssetLibrary.h"
+#include "ObjectTools.h"
 #include "UnrealEdGlobals.h"
 #include "Developer/SmartDeveloperSettings.h"
 #include "Editor/UnrealEdEngine.h"
@@ -95,6 +98,7 @@ void FEditorHelpersModule::StartupModule()
 			ToolMenusHandle = UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateStatic(&RegisterGameEditorMenus));
 		}
 	}
+	InitCBMenuExtension();
 }
 
 void FEditorHelpersModule::ShutdownModule()
@@ -103,6 +107,108 @@ void FEditorHelpersModule::ShutdownModule()
 	{
 		UToolMenus::UnRegisterStartupCallback(ToolMenusHandle);
 	}
+}
+
+void FEditorHelpersModule::InitCBMenuExtension()
+{
+	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+
+	TArray<FContentBrowserMenuExtender_SelectedPaths>& ContentBrowserModuleMenuExtenders = ContentBrowserModule.GetAllPathViewContextMenuExtenders();
+	
+	ContentBrowserModuleMenuExtenders.Add(FContentBrowserMenuExtender_SelectedPaths::CreateRaw(this, &FEditorHelpersModule::CustomCBMenuExtender));
+}
+
+TSharedRef<FExtender> FEditorHelpersModule::CustomCBMenuExtender(const TArray<FString>& SelectedPaths)
+{
+	TSharedRef<FExtender> MenuExtender(new FExtender());
+
+	if (SelectedPaths.Num() > 0)
+	{
+		MenuExtender->AddMenuExtension(
+			FName("Delete"),
+			EExtensionHook::After,
+			nullptr,
+			FMenuExtensionDelegate::CreateRaw(this, &FEditorHelpersModule::AddCBMenuEntry)
+			);
+
+		FolderPathsSelected = SelectedPaths;
+	}
+	
+	return MenuExtender;
+}
+
+void FEditorHelpersModule::AddCBMenuEntry(class FMenuBuilder& MenuBuilder)
+{
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("Delete Unused Asset Label", "Delete Unused Asset"),
+		LOCTEXT("Delete Unused Asset ToolTip",  "Safely delete all unused assets under folder"),
+		FSlateIcon(),
+		FExecuteAction::CreateRaw(this, &FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked)
+		);
+}
+
+void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
+{
+	if (FolderPathsSelected.Num() > 1)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("UnusedAssetTwoButtonClickedMessage","You can only do this to one folder"));
+		return;
+	}
+
+	TArray<FString> AssetPathNames = UEditorAssetLibrary::ListAssets(FolderPathsSelected[0]);
+
+	if (AssetPathNames.Num() == 0)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("UnusedAssetNoAssetsMessage", "No assets found in folder"));
+		return;
+	}
+
+	
+	FText DialogText = FText::Format(LOCTEXT("UnusedAssetMessage", "{0} assets found.\nWould you like to proceed?"),FText::AsNumber(AssetPathNames.Num()));
+
+	EAppReturnType::Type ConfirmResult = FMessageDialog::Open(EAppMsgType::YesNo, DialogText);
+
+	if (ConfirmResult == EAppReturnType::No)
+	{
+		return;
+	}
+
+	TArray<FAssetData> UnusedAssetsDataArray;
+
+	for (const FString& AssetPathName : AssetPathNames)
+	{
+		if (AssetPathName.Contains(TEXT("Developers")) || AssetPathName.Contains(TEXT("Collections")))
+		{
+			continue;
+		}
+
+		if (!UEditorAssetLibrary::DoesAssetExist(AssetPathName))
+		{
+			continue;
+		}
+
+		TArray<FString> AssetReferencers = UEditorAssetLibrary::FindPackageReferencersForAsset(AssetPathName);
+
+		if (AssetReferencers.Num() == 0)
+		{
+			const FAssetData UnusedAssetData = UEditorAssetLibrary::FindAssetData(AssetPathName);
+			UnusedAssetsDataArray.Add(UnusedAssetData);
+		}
+	}
+
+	if (UnusedAssetsDataArray.Num() > 0)
+	{
+		ObjectTools::DeleteAssets(UnusedAssetsDataArray);
+	}
+	else
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("UnusedAssetNoAssetsMessage", "No unused assets found"));
+	}
+
+}
+
+void FEditorHelpersModule::InitPluginExtension()
+{
 }
 
 #undef LOCTEXT_NAMESPACE

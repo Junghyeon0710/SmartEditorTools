@@ -14,4 +14,16 @@ public:
 
 private:
 	FDelegateHandle ToolMenusHandle;
+
+	void InitCBMenuExtension();
+
+	TArray<FString> FolderPathsSelected;
+	TSharedRef<FExtender> CustomCBMenuExtender(const TArray<FString>& SelectedPaths);
+
+	void AddCBMenuEntry(class FMenuBuilder& MenuBuilder);
+
+	void OnDeleteUnusedAssetButtonClicked();
+
+private:
+	void InitPluginExtension();
 };
