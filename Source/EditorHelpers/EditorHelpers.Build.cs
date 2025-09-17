@@ -44,6 +44,7 @@ public class EditorHelpers : ModuleRules
 				"ContentBrowser",
 				"PluginBrowser",
 				"EditorScriptingUtilities",
+				"AssetRegistry"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

@@ -2,12 +2,17 @@
 
 #include "EditorHelpers.h"
 
+#include "AssetToolsModule.h"
 #include "ContentBrowserModule.h"
 #include "EditorAssetLibrary.h"
 #include "ObjectTools.h"
 #include "UnrealEdGlobals.h"
 #include "Developer/SmartDeveloperSettings.h"
 #include "Editor/UnrealEdEngine.h"
+#include "IPluginBrowser.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Misc/AssetRegistryInterface.h"
+#include "Runtime/AssetRegistry/Private/PackageDependencyData.h"
 
 
 #define LOCTEXT_NAMESPACE "FUEAutomationToolsModule"
@@ -172,7 +177,9 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 	{
 		return;
 	}
-
+	
+	FixUpRedirectors();
+	
 	TArray<FAssetData> UnusedAssetsDataArray;
 
 	for (const FString& AssetPathName : AssetPathNames)
@@ -187,8 +194,31 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 			continue;
 		}
 
-		TArray<FString> AssetReferencers = UEditorAssetLibrary::FindPackageReferencersForAsset(AssetPathName);
+		
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+		
+		TArray<FName> Dependencies;
+		if (AssetRegistry.GetDependencies(*FPackageName::ObjectPathToPackageName(AssetPathName), Dependencies, UE::AssetRegistry::EDependencyCategory::Package))
+		{
+			int32 NumDependencies = Dependencies.Num();
 
+			for (auto& Dependency : Dependencies)
+			{
+				if (!Dependency.ToString().StartsWith("/Game") && !Dependency.ToString().StartsWith("/Plugins"))
+				{
+					NumDependencies--;
+				}
+			}
+
+			if (NumDependencies > 0)
+			{
+				continue;
+			}
+		}
+		
+		
+		TArray<FString> AssetReferencers = UEditorAssetLibrary::FindPackageReferencersForAsset(AssetPathName);
 		if (AssetReferencers.Num() == 0)
 		{
 			const FAssetData UnusedAssetData = UEditorAssetLibrary::FindAssetData(AssetPathName);
@@ -207,9 +237,33 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 
 }
 
-void FEditorHelpersModule::InitPluginExtension()
+void FEditorHelpersModule::FixUpRedirectors()
 {
+	TArray<UObjectRedirector*> RedirectorsToFixArray;
+
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+
+	FARFilter Filter;
+	Filter.bRecursivePaths = true;
+	Filter.PackagePaths.Emplace("/Game");
+	Filter.PackagePaths.Emplace(TEXT("/Game"));
+
+	TArray<FAssetData> Redirectors;
+	AssetRegistryModule.Get().GetAssets(Filter, Redirectors);
+	
+	TArray<UObject*> RedirectorObjects;
+	for (const FAssetData& Asset : Redirectors)
+	{
+		if (UObjectRedirector* Redirector = Cast<UObjectRedirector>(Asset.GetAsset()))
+		{
+			RedirectorObjects.Add(Redirector);
+		}
+	}
+
+	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
+	AssetToolsModule.Get().FixupReferencers(RedirectorsToFixArray);
 }
+
 
 #undef LOCTEXT_NAMESPACE
 	

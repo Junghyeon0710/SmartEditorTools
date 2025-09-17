@@ -24,6 +24,5 @@ private:
 
 	void OnDeleteUnusedAssetButtonClicked();
 
-private:
-	void InitPluginExtension();
+	void FixUpRedirectors();
 };
