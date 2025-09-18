@@ -147,9 +147,17 @@ void FEditorHelpersModule::AddCBMenuEntry(class FMenuBuilder& MenuBuilder)
 	MenuBuilder.AddMenuEntry(
 		LOCTEXT("Delete Unused Asset Label", "Delete Unused Asset"),
 		LOCTEXT("Delete Unused Asset ToolTip",  "Safely delete all unused assets under folder"),
-		FSlateIcon(),
+		FSlateIcon(FAppStyle::Get().GetStyleSetName(), "Icons.Delete"),
 		FExecuteAction::CreateRaw(this, &FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked)
 		);
+
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT("Delete Empty Folders Label", "Delete Empty Folders"),
+		LOCTEXT("Delete Empty Folders ToolTip",  "Safely delete all empty folders"),
+		FSlateIcon(FAppStyle::Get().GetStyleSetName(), "Icons.Delete"),
+		FExecuteAction::CreateRaw(this, &FEditorHelpersModule::OnDeleteEmptyFoldersButtonClikced)
+		);
+	
 }
 
 void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
@@ -169,7 +177,7 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 	}
 
 	
-	FText DialogText = FText::Format(LOCTEXT("UnusedAssetMessage", "{0} assets found.\nWould you like to proceed?"),FText::AsNumber(AssetPathNames.Num()));
+	FText DialogText = FText::Format(LOCTEXT("UnusedAssetMessage", "{0} assets need to be checked.\nWould you like to proceed?"),FText::AsNumber(AssetPathNames.Num()));
 
 	EAppReturnType::Type ConfirmResult = FMessageDialog::Open(EAppMsgType::YesNo, DialogText);
 
@@ -184,7 +192,9 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 
 	for (const FString& AssetPathName : AssetPathNames)
 	{
-		if (AssetPathName.Contains(TEXT("Developers")) || AssetPathName.Contains(TEXT("Collections")))
+		if (AssetPathName.Contains(TEXT("Developers")) || AssetPathName.Contains(TEXT("Collections")) ||
+			AssetPathName.Contains(TEXT("__ExternalActors__")) ||
+			AssetPathName.Contains(TEXT("__ExternalObjects__")))
 		{
 			continue;
 		}
@@ -237,6 +247,59 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("UnusedAssetNoAssetsMessage", "No unused assets found"));
 	}
 
+}
+
+void FEditorHelpersModule::OnDeleteEmptyFoldersButtonClikced()
+{
+	FixUpRedirectors();
+
+	TArray<FString> FolderPathsArray = UEditorAssetLibrary::ListAssets(FolderPathsSelected[0],true,true);
+	uint32 Counter = 0;
+
+	FString EmptyFolderPathsNames;
+	TArray<FString> EmptyFoldersPathsArray;
+
+	for(const FString& FolderPath:FolderPathsArray)
+	{
+		if(FolderPath.Contains(TEXT("Developers"))||
+		FolderPath.Contains(TEXT("Collections")) ||
+		FolderPath.Contains(TEXT("__ExternalActors__")) ||
+		FolderPath.Contains(TEXT("__ExternalObjects__")))
+		{
+			continue;
+		}
+
+		if(!UEditorAssetLibrary::DoesDirectoryExist(FolderPath)) continue;
+
+		if(!UEditorAssetLibrary::DoesDirectoryHaveAssets(FolderPath))
+		{
+			EmptyFolderPathsNames.Append(FolderPath);
+			EmptyFolderPathsNames.Append(TEXT("\n"));
+
+			EmptyFoldersPathsArray.Add(FolderPath);
+		}		
+	}
+
+	if(EmptyFoldersPathsArray.Num()==0)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("", "No empty folder found under selected folder"));
+		return;
+	}
+
+	EAppReturnType::Type ConfirmResult = FMessageDialog::Open(EAppMsgType::OkCancel, FText::FromString(TEXT("Empty folders found in:\n") + EmptyFolderPathsNames + TEXT("\nWould you like to delete all?")));
+
+	if(ConfirmResult==EAppReturnType::Cancel) return;
+	
+	for(const FString& EmptyFolderPath:EmptyFoldersPathsArray)
+	{
+		UEditorAssetLibrary::DeleteDirectory(EmptyFolderPath) ? ++Counter :
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Failed to delete ") + EmptyFolderPath));
+	}
+
+	if(Counter>0)
+	{
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Successfully deleted ") + FString::FromInt(Counter) + TEXT(" folders")));
+	}
 }
 
 void FEditorHelpersModule::FixUpRedirectors()
