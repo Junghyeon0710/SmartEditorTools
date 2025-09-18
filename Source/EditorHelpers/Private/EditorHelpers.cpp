@@ -194,29 +194,31 @@ void FEditorHelpersModule::OnDeleteUnusedAssetButtonClicked()
 			continue;
 		}
 
-		
-		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
-		
-		TArray<FName> Dependencies;
-		if (AssetRegistry.GetDependencies(*FPackageName::ObjectPathToPackageName(AssetPathName), Dependencies, UE::AssetRegistry::EDependencyCategory::Package))
-		{
-			int32 NumDependencies = Dependencies.Num();
 
-			for (auto& Dependency : Dependencies)
+		if (GetDefault<USmartDeveloperSettings>()->bDependsOnOtherAssets)
+		{
+			FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+			IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+		
+			TArray<FName> Dependencies;
+			if (AssetRegistry.GetDependencies(*FPackageName::ObjectPathToPackageName(AssetPathName), Dependencies, UE::AssetRegistry::EDependencyCategory::Package))
 			{
-				if (!Dependency.ToString().StartsWith("/Game") && !Dependency.ToString().StartsWith("/Plugins"))
+				int32 NumDependencies = Dependencies.Num();
+
+				for (auto& Dependency : Dependencies)
 				{
-					NumDependencies--;
+					if (!Dependency.ToString().StartsWith("/Game") && !Dependency.ToString().StartsWith("/Plugins"))
+					{
+						NumDependencies--;
+					}
+				}
+
+				if (NumDependencies > 0)
+				{
+					continue;
 				}
 			}
-
-			if (NumDependencies > 0)
-			{
-				continue;
-			}
 		}
-		
 		
 		TArray<FString> AssetReferencers = UEditorAssetLibrary::FindPackageReferencersForAsset(AssetPathName);
 		if (AssetReferencers.Num() == 0)

@@ -28,6 +28,11 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category=Assets)
 	bool bAutoPrefix = false;
 
+	/** True if this asset depends on other game/plugin assets, false if it is self-contained */
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category=Assets)
+	bool bDependsOnOtherAssets = false;
+
+
 #endif
 	
 protected:
