@@ -18,7 +18,6 @@ public:
 	void OnAssetPostRenamed(const TArray<FAssetRenameData>& Data);
 	void OnAssetAdded(const FAssetData& Path);
 
-
 	bool bAssetRenamed = false;
 private:
 	FDelegateHandle ToolMenusHandle;

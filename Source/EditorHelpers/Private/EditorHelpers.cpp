@@ -13,6 +13,7 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Misc/AssetRegistryInterface.h"
 #include "Runtime/AssetRegistry/Private/PackageDependencyData.h"
+#include "SwitchLanguage/LanguageSwitcher.h"
 
 
 #define LOCTEXT_NAMESPACE "FUEAutomationToolsModule"
@@ -92,6 +93,23 @@ static void RegisterGameEditorMenus()
 	);
 	CommonMapEntry.StyleNameOverride = "CalloutToolbar";
 	Section.AddEntry(CommonMapEntry);
+
+	FToolMenuEntry SwitchLanguageEntry = FToolMenuEntry::InitComboButton(
+	"SwitchLanguage", 
+	FUIAction(
+		FExecuteAction(),
+		FCanExecuteAction(),
+		FIsActionChecked(),
+		FIsActionButtonVisible()
+	),
+	FOnGetContent::CreateStatic(&FLanguageSwitcher::GetLanguagesDropdown), 
+	LOCTEXT("SwitchLanguage_Label", "Switch Language"), 
+	LOCTEXT("SwitchLanguage_ToolTip", "Select the editor language from this dropdown"), 
+	FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Level")
+	);
+
+	SwitchLanguageEntry.StyleNameOverride = "CalloutToolbar";
+	Section.AddEntry(SwitchLanguageEntry);
 }
 
 void FEditorHelpersModule::StartupModule()

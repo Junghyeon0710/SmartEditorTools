@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/Object.h"
-#include "LanguageSwitcher.generated.h"
 
 
 class FLanguageSwitcher 
 {
+public:
 	
+	static TSharedRef<SWidget> GetLanguagesDropdown();
 };
