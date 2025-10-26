@@ -25,7 +25,7 @@ public class EditorHelpers : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core", "InternationalizationSettings",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -44,7 +44,8 @@ public class EditorHelpers : ModuleRules
 				"ContentBrowser",
 				"PluginBrowser",
 				"EditorScriptingUtilities",
-				"AssetRegistry"
+				"AssetRegistry", 
+				"InternationalizationSettings",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
