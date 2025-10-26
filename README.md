@@ -20,6 +20,8 @@ A plugin for Unreal Engine that provides a smarter editor environment using **Py
 - Automatically adds prefixes based on naming conventions for assets in a specified path.
 - With **AutoPrefix** enabled, asset creation or renaming will be validated and prefixed automatically.
 - Provides a custom combo box slatewidget for the editor level.
+- Finds and deletes unused assets that are not referenced in the project.
+- Finds and deletes empty folders in the project.
 
 ---
 
