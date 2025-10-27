@@ -7,22 +7,18 @@
 #include "SCulturePicker.h"
 #include "SCulturePicker.h"
 #include "Internationalization/Culture.h"
+#include "Kismet/KismetInternationalizationLibrary.h"
 
 static void SwitchLanguageButtonClicked(FString Language)
 {
 	if (GConfig)
 	{
 		const TArray<FString> LocalizedCultureNames = FTextLocalizationManager::Get().GetLocalizedCultureNames(ELocalizationLoadFlags::Editor);
-		TWeakObjectPtr<UInternationalizationSettingsModel> SettingsModel;
+		UInternationalizationSettingsModel* SettingsModel = NewObject<UInternationalizationSettingsModel>();
 		bool bExist = LocalizedCultureNames.Contains(Language);
 		if (bExist)
 		{
-			if (SettingsModel.IsValid())
-			{
-				SettingsModel->SetEditorLanguage(Language);
-			}
-
-			if (SettingsModel.Get())
+			if (SettingsModel)
 			{
 				SettingsModel->SetEditorLanguage(Language);
 			}
@@ -146,6 +142,45 @@ TSharedRef<SWidget> FLanguageSwitcher::GetLanguagesDropdown()
 
 	return MenuBuilder.MakeWidget();
 
+}
+
+void FLanguageSwitcher::SwitchLanguageKeyboardButtonClicked()
+{
+	if (GConfig) {
+
+		const TArray<FString> LocalizedCultureNames = FTextLocalizationManager::Get().GetLocalizedCultureNames(ELocalizationLoadFlags::Editor);
+
+		FString SourceLangStr = "en";
+		FString TargetLangStr = "ko";
+
+		FString CurrentLanguage = UKismetInternationalizationLibrary::GetCurrentLanguage();
+		FString NewLanguage = (CurrentLanguage == SourceLangStr) ? TargetLangStr : SourceLangStr;
+		TWeakObjectPtr<UInternationalizationSettingsModel> SettingsModel;
+		bool bExist = LocalizedCultureNames.Contains(NewLanguage);
+		if (bExist) {
+			SettingsModel->SetEditorLanguage(NewLanguage);
+			// if (not SettingsModel->ShouldUseLocalizedPropertyNames()) {
+			// 	SettingsModel->SetShouldUseLocalizedPropertyNames(bExist);
+			// }
+			// if (not SettingsModel->ShouldUseLocalizedNodeAndPinNames()) {
+			// 	SettingsModel->SetShouldUseLocalizedNodeAndPinNames(bExist);
+			// }
+			FInternationalization& I18N = FInternationalization::Get();
+			I18N.SetCurrentLanguage(NewLanguage);
+			// Find all Schemas and force a visualization cache clear
+			for (TObjectIterator<UClass> ClassIt; ClassIt; ++ClassIt)
+			{
+				UClass* CurrentClass = *ClassIt;
+
+				if (UEdGraphSchema* Schema = Cast<UEdGraphSchema>(CurrentClass->GetDefaultObject()))
+				{
+					Schema->ForceVisualizationCacheClear();
+				}
+			}
+		}
+
+
+	}
 }
 
 FString FLanguageSwitcher::GetCultureDisplayName(const FCultureRef& Culture,SCulturePicker::ECultureDisplayFormat DisplayNameFormat, const bool bIsRootItem)

@@ -10,9 +10,11 @@
 #include "Developer/SmartDeveloperSettings.h"
 #include "Editor/UnrealEdEngine.h"
 #include "IPluginBrowser.h"
+#include "LevelEditor.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Misc/AssetRegistryInterface.h"
 #include "Runtime/AssetRegistry/Private/PackageDependencyData.h"
+#include "SwitchLanguage/LanguageSwitchCommands.h"
 #include "SwitchLanguage/LanguageSwitcher.h"
 
 
@@ -114,8 +116,22 @@ static void RegisterGameEditorMenus()
 
 void FEditorHelpersModule::StartupModule()
 {
+	
 	if (!IsRunningGame())
 	{
+		FLanguageSwitchCommands::Register();
+	
+		PluginCommands = MakeShareable(new FUICommandList);
+
+		PluginCommands->MapAction(
+			FLanguageSwitchCommands::Get().PluginAction,
+			FExecuteAction::CreateStatic(&FLanguageSwitcher::SwitchLanguageKeyboardButtonClicked),
+			FCanExecuteAction());
+			
+			FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+                TSharedPtr<FUICommandList> LevelEditorCommandList = LevelEditorModule.GetGlobalLevelEditorActions();
+                LevelEditorCommandList->Append(PluginCommands.ToSharedRef());
+		
 		if (FSlateApplication::IsInitialized())
 		{
 			ToolMenusHandle = UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateStatic(&RegisterGameEditorMenus));

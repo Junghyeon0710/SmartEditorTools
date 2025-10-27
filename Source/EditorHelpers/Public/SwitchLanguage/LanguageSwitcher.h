@@ -9,6 +9,8 @@ class FLanguageSwitcher
 public:
 	
 	static TSharedRef<SWidget> GetLanguagesDropdown();
+	
+	static void SwitchLanguageKeyboardButtonClicked();
 
 	static FString GetCultureDisplayName(const FCultureRef& Culture, SCulturePicker::ECultureDisplayFormat DisplayNameFormat, const bool bIsRootItem);
 };

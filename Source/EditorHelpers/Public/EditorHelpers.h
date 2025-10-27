@@ -26,4 +26,7 @@ private:
 	void OnDeleteEmptyFoldersButtonClikced();
 	
 	void FixUpRedirectors();
+
+private:
+	TSharedPtr<class FUICommandList> PluginCommands;
 };

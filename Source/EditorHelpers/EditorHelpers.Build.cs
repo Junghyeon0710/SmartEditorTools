@@ -25,7 +25,7 @@ public class EditorHelpers : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "InternationalizationSettings",
+				"Core", "InternationalizationSettings", "EditorStyle", "EditorStyle",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

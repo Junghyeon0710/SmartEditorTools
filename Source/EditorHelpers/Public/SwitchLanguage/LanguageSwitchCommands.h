@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EditorStyleSet.h"
+#include "EditorStyleSet.h"
 #include "UObject/Object.h"
 
 /**
@@ -14,7 +16,7 @@ class FLanguageSwitchCommands : public TCommands<FLanguageSwitchCommands>
 public:
 
 	FLanguageSwitchCommands()
-		: TCommands<FLanguageSwitchCommands>(TEXT("LanguageSwitch"), NSLOCTEXT("Contexts", "LanguageSwitch", "LanguageSwitch Plugin"), NAME_None, NAME_None)
+		: TCommands<FLanguageSwitchCommands>(TEXT("LanguageSwitch"), NSLOCTEXT("Contexts", "LanguageSwitch", "LanguageSwitch Plugin"), NAME_None, FEditorStyle::GetStyleSetName())
 	{
 	}
 

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "LanguageSwitchCommands.h"
+#include "SwitchLanguage/LanguageSwitchCommands.h"
 
 #define LOCTEXT_NAMESPACE "FLanguageSwitchCommands"
 
