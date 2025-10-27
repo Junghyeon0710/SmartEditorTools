@@ -3,6 +3,11 @@
 
 #include "LanguageSwitchCommands.h"
 
+#define LOCTEXT_NAMESPACE "FLanguageSwitchCommands"
+
 void FLanguageSwitchCommands::RegisterCommands()
 {
+	UI_COMMAND(PluginAction, "Language", "Execute Language action", EUserInterfaceActionType::Button, FInputChord(EKeys::L));
 }
+
+#undef LOCTEXT_NAMESPACE
