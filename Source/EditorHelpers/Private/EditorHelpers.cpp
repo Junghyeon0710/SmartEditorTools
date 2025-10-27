@@ -12,6 +12,7 @@
 #include "IPluginBrowser.h"
 #include "LevelEditor.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Interfaces/IMainFrameModule.h"
 #include "Misc/AssetRegistryInterface.h"
 #include "Runtime/AssetRegistry/Private/PackageDependencyData.h"
 #include "SwitchLanguage/LanguageSwitchCommands.h"
@@ -116,21 +117,29 @@ static void RegisterGameEditorMenus()
 
 void FEditorHelpersModule::StartupModule()
 {
-	
 	if (!IsRunningGame())
 	{
 		FLanguageSwitchCommands::Register();
-	
+
 		PluginCommands = MakeShareable(new FUICommandList);
 
 		PluginCommands->MapAction(
 			FLanguageSwitchCommands::Get().PluginAction,
 			FExecuteAction::CreateStatic(&FLanguageSwitcher::SwitchLanguageKeyboardButtonClicked),
 			FCanExecuteAction());
-			
-			FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
-                TSharedPtr<FUICommandList> LevelEditorCommandList = LevelEditorModule.GetGlobalLevelEditorActions();
-                LevelEditorCommandList->Append(PluginCommands.ToSharedRef());
+
+		// FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+		//              TSharedPtr<FUICommandList> LevelEditorCommandList = LevelEditorModule.GetGlobalLevelEditorActions();
+		//              LevelEditorCommandList->Append(PluginCommands.ToSharedRef());
+		IMainFrameModule& MainFrame = FModuleManager::GetModuleChecked<IMainFrameModule>("MainFrame");
+
+#if ENGINE_MAJOR_VERSION >=5
+		TSharedPtr<FUICommandList> MainFrameCommands = MainFrame.GetMainFrameCommandBindings();
+#else
+		TSharedRef<FUICommandList> MainFrameCommands = MainFrame.GetMainFrameCommands();
+#endif
+
+		MainFrameCommands->Append(PluginCommands.ToSharedRef());
 		
 		if (FSlateApplication::IsInitialized())
 		{
