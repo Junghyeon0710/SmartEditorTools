@@ -46,6 +46,7 @@ public class EditorHelpers : ModuleRules
 				"EditorScriptingUtilities",
 				"AssetRegistry", 
 				"InternationalizationSettings",
+			
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
