@@ -155,7 +155,7 @@ void FLanguageSwitcher::SwitchLanguageKeyboardButtonClicked()
 
 		FString CurrentLanguage = UKismetInternationalizationLibrary::GetCurrentLanguage();
 		FString NewLanguage = (CurrentLanguage == SourceLangStr) ? TargetLangStr : SourceLangStr;
-		TWeakObjectPtr<UInternationalizationSettingsModel> SettingsModel;
+		UInternationalizationSettingsModel* SettingsModel = NewObject<UInternationalizationSettingsModel>();
 		bool bExist = LocalizedCultureNames.Contains(NewLanguage);
 		if (bExist) {
 			SettingsModel->SetEditorLanguage(NewLanguage);

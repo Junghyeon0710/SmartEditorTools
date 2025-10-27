@@ -151,9 +151,29 @@ void FEditorHelpersModule::StartupModule()
 
 void FEditorHelpersModule::ShutdownModule()
 {
-	if (UObjectInitialized() && ToolMenusHandle.IsValid())
+	if (UObjectInitialized())
 	{
-		UToolMenus::UnRegisterStartupCallback(ToolMenusHandle);
+		if (ToolMenusHandle.IsValid())
+		{
+			UToolMenus::UnRegisterStartupCallback(ToolMenusHandle);
+			ToolMenusHandle.Reset();
+		}
+
+		if (FModuleManager::Get().IsModuleLoaded("ContentBrowser"))
+		{
+			FContentBrowserModule& ContentBrowserModule = FModuleManager::GetModuleChecked<FContentBrowserModule>("ContentBrowser");
+			ContentBrowserModule.GetAllPathViewContextMenuExtenders().RemoveAll([this](const auto& Extender) {
+				return Extender.IsBoundToObject(this);
+			});
+		}
+		
+		UToolMenus::UnRegisterStartupCallback(this);
+
+		UToolMenus::UnregisterOwner(this);
+		
+		PluginCommands.Reset();
+
+		FLanguageSwitchCommands::Unregister();
 	}
 }
 
