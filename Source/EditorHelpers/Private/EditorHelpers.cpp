@@ -105,7 +105,7 @@ static void RegisterGameEditorMenus()
 	FOnGetContent::CreateStatic(&FLanguageSwitcher::GetLanguagesDropdown), 
 	LOCTEXT("SwitchLanguage_Label", "Switch Language"), 
 	LOCTEXT("SwitchLanguage_ToolTip", "Select the editor language from this dropdown"), 
-	FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Level")
+	FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.World")
 	);
 
 	SwitchLanguageEntry.StyleNameOverride = "CalloutToolbar";

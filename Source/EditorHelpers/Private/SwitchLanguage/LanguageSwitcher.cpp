@@ -137,8 +137,8 @@ TSharedRef<SWidget> FLanguageSwitcher::GetLanguagesDropdown()
 			continue;
 
 		MenuBuilder.AddMenuEntry(
-			FText::FromString(Culture->GetDisplayName()),  // 예: "Korean"
-			FText::FromString(Culture->GetNativeName()),   // 예: "한국어"
+			FText::FromString(Culture->GetDisplayName()),
+			FText::FromString(Culture->GetNativeName()), 
 			FSlateIcon(),
 			FUIAction(FExecuteAction::CreateStatic(&SwitchLanguageButtonClicked, Culture->GetName()))
 		);
