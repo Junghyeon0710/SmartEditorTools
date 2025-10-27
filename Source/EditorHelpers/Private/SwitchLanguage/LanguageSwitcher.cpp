@@ -10,15 +10,23 @@
 
 static void SwitchLanguageButtonClicked(FString Language)
 {
-	if (GConfig) {
-
+	if (GConfig)
+	{
 		const TArray<FString> LocalizedCultureNames = FTextLocalizationManager::Get().GetLocalizedCultureNames(ELocalizationLoadFlags::Editor);
-		
 		TWeakObjectPtr<UInternationalizationSettingsModel> SettingsModel;
 		bool bExist = LocalizedCultureNames.Contains(Language);
-		if (bExist) {
-			SettingsModel->SetEditorLanguage(Language);
-		
+		if (bExist)
+		{
+			if (SettingsModel.IsValid())
+			{
+				SettingsModel->SetEditorLanguage(Language);
+			}
+
+			if (SettingsModel.Get())
+			{
+				SettingsModel->SetEditorLanguage(Language);
+			}
+
 			FInternationalization& I18N = FInternationalization::Get();
 			I18N.SetCurrentLanguage(Language);
 			for (TObjectIterator<UClass> ClassIt; ClassIt; ++ClassIt)
@@ -31,8 +39,6 @@ static void SwitchLanguageButtonClicked(FString Language)
 				}
 			}
 		}
-
-
 	}
 }
 
@@ -117,20 +123,29 @@ TSharedRef<SWidget> FLanguageSwitcher::GetLanguagesDropdown()
 		return FTextComparison::CompareTo(LHSDisplayName, RHSDisplayName) < 0;
 	});
 
+	TArray<FString> AllowedCultures = {
+		TEXT("ko"),        
+		TEXT("en"),        
+		TEXT("ja"),        
+		TEXT("zh-Hans"),   
+	};
 
-	// 메뉴 빌드
-	for (auto& Pair : StockEntries)
+	for (const FString& CultureName : AllowedCultures)
 	{
-		const FCulturePtr Culture = Pair.Get()->Culture;
+		const FCulturePtr Culture = FInternationalization::Get().GetCulture(CultureName);
+		if (!Culture.IsValid())
+			continue;
+
 		MenuBuilder.AddMenuEntry(
-			FText::FromString(Culture->GetDisplayName()),
-			FText::FromString(Culture->GetNativeName()),
+			FText::FromString(Culture->GetDisplayName()),  // 예: "Korean"
+			FText::FromString(Culture->GetNativeName()),   // 예: "한국어"
 			FSlateIcon(),
-			FUIAction(FExecuteAction::CreateStatic(&SwitchLanguageButtonClicked, Culture->GetName())
-		));
+			FUIAction(FExecuteAction::CreateStatic(&SwitchLanguageButtonClicked, Culture->GetName()))
+		);
 	}
 
 	return MenuBuilder.MakeWidget();
+
 }
 
 FString FLanguageSwitcher::GetCultureDisplayName(const FCultureRef& Culture,SCulturePicker::ECultureDisplayFormat DisplayNameFormat, const bool bIsRootItem)
